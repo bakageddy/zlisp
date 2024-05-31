@@ -15,7 +15,7 @@ typedef struct {
 } zlisp_lexer_t;
 
 zlisp_lexer_t *init_lexer(char *file_name);
-token_t next_token(zlisp_lexer_t *l);
+token_t *next_token(zlisp_lexer_t *l);
 void delete_lexer(zlisp_lexer_t *lexer);
 
 #ifdef ZLISP_LEXER_IMPL
@@ -97,39 +97,45 @@ void consume_whitespace(zlisp_lexer_t *l) {
 	}
 }
 
-token_t next_token(zlisp_lexer_t *l) {
+token_t *next_token(zlisp_lexer_t *l) {
 	consume_whitespace(l);
 	if (l -> curr == '(') {
-		token_t tok = new_token(LPAREN);
+		token_t *tok = new_token(LPAREN);
+		if (tok == NULL) return NULL;
 		consume(l);
 		return tok;
 	} else if (l -> curr == ')') {
-		token_t tok = new_token(RPAREN);
+		token_t *tok = new_token(RPAREN);
+		if (tok == NULL) return NULL;
 		consume(l);
 		return tok;
 	} else if (l -> curr == ':') {
-		token_t tok = new_token(ATOM);
+		token_t *tok = new_token(ATOM);
+		if (tok == NULL) return NULL;
 		do {
 			token_append(&tok, l -> curr);
 			consume(l);
 		} while (has_content(l) && !is_whitespace(l -> curr));
 		return tok;
 	} else if (isalpha(l -> curr)) {
-		token_t tok = new_token(IDENT);
+		token_t *tok = new_token(IDENT);
+		if (tok == NULL) return NULL;
 		do {
 			token_append(&tok, l -> curr);
 			consume(l);
 		} while (has_content(l) && !is_whitespace(l -> curr));
 		return tok;
 	} else if (isdigit(l -> curr)) {
-		token_t tok = new_token(LITERAL);
+		token_t *tok = new_token(LITERAL);
+		if (tok == NULL) return NULL;
 		do {
 			token_append(&tok, l -> curr);
 			consume(l);
 		} while (has_content(l) && isdigit(l -> curr) && !is_whitespace(l -> curr));
 		return tok;
 	} else if (l -> curr == '"') {
-		token_t tok = new_token(STRING_LITERAL);
+		token_t *tok = new_token(STRING_LITERAL);
+		if (tok == NULL) return NULL;
 		consume(l);
 		do {
 			token_append(&tok, l -> curr);
@@ -138,7 +144,7 @@ token_t next_token(zlisp_lexer_t *l) {
 		consume(l);
 		return tok;
 	} else {
-		token_t tok = new_token(UNINITIALIZED);
+		token_t *tok = new_token(UNINITIALIZED);
 		return tok;
 	}
 }

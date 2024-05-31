@@ -22,7 +22,7 @@ typedef struct {
 	size_t n;
 } token_t;
 
-token_t new_token(token_type_t type);
+token_t *new_token(token_type_t type);
 int token_append(token_t *tok, char c);
 void free_token(token_t *tok);
 void print_token(token_t *tok);
@@ -52,12 +52,12 @@ inline void print_token(token_t *tok) {
 }
 
 // TODO: Analyze if owning tokens or borrowing tokens is useful
-token_t new_token(token_type_t type) {
-	return (token_t) {
-		.type = type,
-		.buf = NULL,
-		.n = 0,
-	};
+token_t *new_token(token_type_t type) {
+	token_t *tok = calloc(1, sizeof(*tok));
+	if (tok == NULL) return NULL;
+	tok -> type = type;
+	tok -> buf = NULL;
+	tok -> n = 0;
 }
 
 int token_append(token_t *tok, char c) {

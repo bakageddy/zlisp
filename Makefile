@@ -6,4 +6,4 @@ tests:$(TESTS)
 	sh ./tests/run_tests.sh
 
 %.o: %.c
-	$CC) $^ -o $
+	$(CC) $^ -o $

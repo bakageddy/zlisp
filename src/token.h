@@ -58,6 +58,7 @@ token_t *new_token(token_type_t type) {
 	tok -> type = type;
 	tok -> buf = NULL;
 	tok -> n = 0;
+	return tok;
 }
 
 int token_append(token_t *tok, char c) {
@@ -77,9 +78,7 @@ int token_append(token_t *tok, char c) {
 
 void free_token(token_t *tok) {
 	free(tok -> buf);
-	tok -> buf = NULL;
-	tok -> n = 0;
-	tok -> type = UNINITIALIZED;
+	free(tok);
 }
 
 #endif // ZLISP_TOKEN_IMPL

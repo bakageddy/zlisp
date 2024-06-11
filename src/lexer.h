@@ -58,6 +58,7 @@ zlisp_lexer_t *init_lexer(char *file_name) {
 		free(file_buf);
 		return NULL;
 	}
+	close(handle);
 
 	lexer = calloc(1, sizeof(*lexer));
 	if (lexer == NULL) {
@@ -72,7 +73,6 @@ zlisp_lexer_t *init_lexer(char *file_name) {
 	lexer -> cursor = 0;
 	// TODO: Handle case when file_size == 0
 	lexer -> curr = lexer -> file_contents[lexer -> cursor];
-	close(handle);
 
 	return lexer;
 }
@@ -154,6 +154,7 @@ token_t *next_token(zlisp_lexer_t *l) {
 }
 
 void delete_lexer(zlisp_lexer_t *lexer) {
+	if (lexer == NULL) return;
 	free(lexer -> file_contents);
 	free(lexer);
 }

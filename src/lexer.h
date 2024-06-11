@@ -85,6 +85,10 @@ bool is_whitespace(char c) {
 	return c == '\n' || c == '\r' || c == '\t' || c == ' ';
 }
 
+bool is_reserved(char c) {
+	return c == ')' || c == '(' || c == ':';
+}
+
 void consume(zlisp_lexer_t *l) {
 	assert(has_content(l) == true);
 	l -> cursor += 1;
@@ -113,23 +117,23 @@ token_t *next_token(zlisp_lexer_t *l) {
 		token_t *tok = new_token(ATOM);
 		if (tok == NULL) return NULL;
 		do {
-			token_append(&tok, l -> curr);
+			token_append(tok, l -> curr);
 			consume(l);
-		} while (has_content(l) && !is_whitespace(l -> curr));
+		} while (has_content(l) && !is_whitespace(l -> curr) && !is_reserved(l -> curr));
 		return tok;
 	} else if (isalpha(l -> curr)) {
 		token_t *tok = new_token(IDENT);
 		if (tok == NULL) return NULL;
 		do {
-			token_append(&tok, l -> curr);
+			token_append(tok, l -> curr);
 			consume(l);
-		} while (has_content(l) && !is_whitespace(l -> curr));
+		} while (has_content(l) && !is_whitespace(l -> curr) && !is_reserved(l -> curr));
 		return tok;
 	} else if (isdigit(l -> curr)) {
 		token_t *tok = new_token(LITERAL);
 		if (tok == NULL) return NULL;
 		do {
-			token_append(&tok, l -> curr);
+			token_append(tok, l -> curr);
 			consume(l);
 		} while (has_content(l) && isdigit(l -> curr) && !is_whitespace(l -> curr));
 		return tok;
@@ -138,7 +142,7 @@ token_t *next_token(zlisp_lexer_t *l) {
 		if (tok == NULL) return NULL;
 		consume(l);
 		do {
-			token_append(&tok, l -> curr);
+			token_append(tok, l -> curr);
 			consume(l);
 		} while (has_content(l) && l -> curr != '"');
 		consume(l);

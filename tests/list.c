@@ -15,11 +15,12 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
-	token_t *tok = next_token(lexer);
-	if (tok == NULL) return 0;
-	list_append(list, tok);
-
-	assert((token_t*) list -> data[0] == tok);
+	for (int i = 0;; i++) {
+		token_t *tok = next_token(lexer);
+		if (tok->type == UNINITIALIZED) break;
+		list_append(list, tok);
+		print_token(list -> data[i]);
+	}
 
 	delete_lexer(lexer);
 	delete_list(list);

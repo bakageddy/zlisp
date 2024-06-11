@@ -20,6 +20,9 @@ void delete_list(zlisp_list_t *list);
 
 #ifdef ZLISP_LIST_IMPL
 
+#include <stdlib.h>
+#include "../src/utils.h"
+
 zlisp_list_t *create_list(void) {
 	zlisp_list_t *list = calloc(1, sizeof(*list));
 	if (list == NULL) {
@@ -29,36 +32,12 @@ zlisp_list_t *create_list(void) {
 	void *data = calloc(ZLISP_LIST_INITIAL_CAPACITY, sizeof(void*));
 	if (data == NULL) {
 		free(list);
-		return NULL
-	} 
-
-	return (zlisp_list_t) {
-		.data = data,
-		.cap = 16,
-		.len = 0,
-	};
-}
-
-int list_append(zlisp_list_t *list, void *elem) {
-	if (list == NULL || elem == NULL)  return -1;
-	if (list -> len == list -> cap && expand_list(list) < 0) {
-		return -1;
-	}
-
-	list -> data[list -> len] = elem;
-	list -> len += 1;
-	return 0;
-}
-
-void *list_pop(zlisp_list_t *list) {
-	if (list == NULL) return NULL;
-	if (list -> len == 0) return NULL;
-	if (list -> len == (size_t) (list -> cap * 0.5) && shrink_list(list) < 0) {
 		return NULL;
-	}
-	void *elem = list -> data[list -> len];
-	list -> len -= 1;
-	return elem;
+	} 
+	list -> data = data;
+	list -> cap = 16;
+	list -> len = 0;
+	return list;
 }
 
 int expand_list(zlisp_list_t *list) {
@@ -83,6 +62,28 @@ int shrink_list(zlisp_list_t *list) {
 	list -> data = buf;
 	list -> cap *= 2;
 	return 0;
+}
+
+int list_append(zlisp_list_t *list, void *elem) {
+	if (list == NULL || elem == NULL)  return -1;
+	if (list -> len == list -> cap && expand_list(list) < 0) {
+		return -1;
+	}
+
+	list -> data[list -> len] = elem;
+	list -> len += 1;
+	return 0;
+}
+
+void *list_pop(zlisp_list_t *list) {
+	if (list == NULL) return NULL;
+	if (list -> len == 0) return NULL;
+	if (list -> len == (size_t) (list -> cap * 0.5) && shrink_list(list) < 0) {
+		return NULL;
+	}
+	void *elem = list -> data[list -> len];
+	list -> len -= 1;
+	return elem;
 }
 
 void delete_list(zlisp_list_t *list) {

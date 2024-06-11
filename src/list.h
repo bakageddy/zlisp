@@ -13,8 +13,11 @@ typedef struct {
 	size_t len;
 } zlisp_list_t;
 
+typedef void (*zlisp_element_printer_t)(void *elem);
+
 zlisp_list_t *create_list(void);
 int list_append(zlisp_list_t *list, void *elem);
+void list_print(zlisp_list_t *list, zlisp_element_printer_t f);
 void *list_pop(zlisp_list_t *list);
 void delete_list(zlisp_list_t *list);
 
@@ -86,7 +89,14 @@ void *list_pop(zlisp_list_t *list) {
 	return elem;
 }
 
+void list_print(zlisp_list_t *list, zlisp_element_printer_t f) {
+	for (size_t i = 0; i < list -> len; i++) {
+		f(list -> data[i]);
+	}
+}
+
 void delete_list(zlisp_list_t *list) {
+	if (list == NULL) return;
 	free(list -> data);
 	free(list);
 }
